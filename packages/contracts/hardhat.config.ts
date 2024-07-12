@@ -20,7 +20,17 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       zircuit: process.env.ZIRCUIT_EXPLORER_API_KEY!,
-    }
+    },
+    customChains: [
+      {
+        network: "zircuit",
+        chainId: 48899,
+        urls: {
+          apiURL: "https://explorer.zircuit.com/api",
+          browserURL: "https://explorer.zircuit.com"
+        }
+      }
+    ]
   },
 
 };
