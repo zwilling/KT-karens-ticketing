@@ -2,13 +2,17 @@
 
 Smart contracts for the Karen NFT Ticketing system.
 
-## TODO
-- Instructions
+## Testing
 
 ```shell
-npx hardhat help
+npx hardhat compile
 npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
+```
+
+## Deploying
+```shell
+cp examle.env .env
+# Fill environment variables in .env
+npx hardhat compile
+npx hardhat ignition deploy ./ignition/modules/Lock.ts --verify --network zircuit 
 ```
