@@ -26,7 +26,7 @@ const config: HardhatUserConfig = {
         network: "zircuit",
         chainId: 48899,
         urls: {
-          apiURL: "https://explorer.zircuit.com/api",
+          apiURL: "https://explorer.zircuit.com/api/contractVerifyHardhat",
           browserURL: "https://explorer.zircuit.com"
         }
       }

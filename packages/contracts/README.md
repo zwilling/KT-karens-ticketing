@@ -14,5 +14,5 @@ npx hardhat test
 cp examle.env .env
 # Fill environment variables in .env
 npx hardhat compile
-npx hardhat ignition deploy ./ignition/modules/Lock.ts --verify --network zircuit 
+npx hardhat ignition deploy ./ignition/modules/NFTTicketCollection.ts --verify --network zircuit 
 ```
