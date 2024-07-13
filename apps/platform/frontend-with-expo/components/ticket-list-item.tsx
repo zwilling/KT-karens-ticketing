@@ -14,7 +14,7 @@ export default function TicketListItem({ event }) {
                 <Text style={{ fontSize: 12, color: "#888" }}>22 July, 2024</Text>
             </View>
             <Pressable style={styles.goToTicketsButton}>
-                <Link href={`/tickets?eventId=${event.collection}`}>
+                <Link href={`/tickets?eventAddress=${event.contracts[0].address}&eventID=${event.collection}`}>
                     <Text style={{ color: "#fff" }}>Get Tickets</Text>
                 </Link>
             </Pressable>

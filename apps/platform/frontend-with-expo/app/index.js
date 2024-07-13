@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text } from "react-native"
 
-import { eventsExample } from "../data/events"
+import { chainIDOpenSea, contractDeployer, optionsOpenSeaAPI, defaultTicketTypeID } from "./parameters"
 import { useEffect, useState } from "react"
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
@@ -8,12 +8,6 @@ import { useFonts } from 'expo-font';
 import TicketListItem from "../components/ticket-list-item";
 
 import { Urbanist_400Regular, Urbanist_500Medium, Urbanist_600SemiBold } from '@expo-google-fonts/urbanist';
-
-// TODO: Hardcoded data to be replaced with actual data
-const chainIDOpenSea = 'base_sepolia';
-const contractDeployer = 'crypto-cinema';
-const defaultTicketTypeID = 0;
-const optionsOpenSeaAPI = { method: 'GET', headers: { accept: 'application/json' } };
 
 export default function Discover() {
   let [fontsLoaded] = useFonts({
