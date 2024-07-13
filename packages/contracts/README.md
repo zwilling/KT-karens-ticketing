@@ -1,13 +1,18 @@
-# Sample Hardhat Project
+# Karen Smart Contracts
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+Smart contracts for the Karen NFT Ticketing system.
 
-Try running some of the following tasks:
+## Testing
 
 ```shell
-npx hardhat help
+npx hardhat compile
 npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
+```
+
+## Deploying
+```shell
+cp examle.env .env
+# Fill environment variables in .env
+npx hardhat compile
+npx hardhat ignition deploy ./ignition/modules/NFTTicketCollection.ts --verify --network zircuit 
 ```
