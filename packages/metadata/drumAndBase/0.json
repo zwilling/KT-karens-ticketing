@@ -1,0 +1,22 @@
+{
+  "name": "drum and BASE",
+  "description": "Get ready for some profound BEATS. Taking place in 'CLUB ZODIAK', Brussels, Belgium",
+  "image": "https://raw.githubusercontent.com/zwilling/karen/main/packages/metadata/drumAndBase/image.jpg",
+  "decimals": 0,
+  "external_url": "https://www.base.org/",
+  "attributes": [
+    {
+      "trait_type": "Venue",
+      "value": "CLUB ZODIAK, Brussels, Belgium"
+    },
+    {
+      "trait_type": "Event Name",
+      "value": "drum and BASE"
+    },
+    {
+      "display_type": "date",
+      "trait_type": "Date",
+      "value": 1731351600
+    }
+  ]
+}

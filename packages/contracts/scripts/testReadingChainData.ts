@@ -13,7 +13,7 @@ async function main() {
   const contractAddr = await getDeployedContractAddress("NFTTicketCollection#NFTTicketCollection");
   const curatedTicketList = [contractAddr];
 
-  const ticketBalances = await getTicketBalances(organizer.address, curatedTicketList);
+  const ticketBalances = await getTicketBalances(buyer.address, curatedTicketList);
 
   for (const [contractAddr, balance] of Object.entries(ticketBalances)) {
     console.log(`Balance of ${organizer.address} in contract ${contractAddr}: ${balance}`);
