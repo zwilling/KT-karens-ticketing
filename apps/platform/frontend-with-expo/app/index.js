@@ -1,34 +1,66 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native"
 
-export default function Page() {
-  return (
-    <View style={styles.container}>
-      <View style={styles.main}>
-        <Text style={styles.title}>Hello World</Text>
-        <Text style={styles.subtitle}>This is the first page of your app.</Text>
+import { eventsExample } from "../data/events"
+import { useEffect } from "react"
+import AppLoading from 'expo-app-loading';
+import { useFonts } from 'expo-font';
+// import opensea from '@api/opensea';
+
+import TicketListItem from "../components/ticket-list-item";
+
+import { Urbanist_400Regular, Urbanist_500Medium, Urbanist_600SemiBold } from '@expo-google-fonts/urbanist';
+
+export default function Discover() {
+  let [fontsLoaded] = useFonts({
+    Urbanist_400Regular,
+    Urbanist_500Medium,
+    Urbanist_600SemiBold
+  });
+
+  // useEffect(() => {
+    
+  // }, [])
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  } else {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.trendingTitle}>Trending</Text>
+        <Text style={{ fontSize: 16, fontFamily: 'Urbanist_400Regular', fontWeight: '400' }}>Coming Up</Text>
+
+        <View>
+          {eventsExample.collections.slice(0, 3).map((event, index) => (
+            <TicketListItem event={event} key={index} />
+          ))}
+        </View>
+
       </View>
-    </View>
-  );
+    )
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    padding: 24,
+    display: "flex",
+    flexDirection: "column",
+    height: "100vh",
+    width: "80%",
+    margin: "auto",
   },
-  main: {
-    flex: 1,
-    justifyContent: "center",
-    maxWidth: 960,
-    marginHorizontal: "auto",
+  trendingTitle: {
+    fontSize: 24,
+    fontFamily: 'Urbanist_600SemiBold',
+    fontWeight: '600',
+    textAlign: 'start',
   },
-  title: {
-    fontSize: 64,
-    fontWeight: "bold",
-  },
-  subtitle: {
-    fontSize: 36,
-    color: "#38434D",
-  },
-});
+  categoryHeader: {
+    fontSize: 16,
+    fontFamily: 'Urbanist_600SemiBold',
+    fontWeight: '400',
+    textAlign: 'start',
+    marginTop: 10,
+    color: "#58566A",
+  }
+})
+
