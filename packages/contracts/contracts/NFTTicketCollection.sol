@@ -13,7 +13,19 @@ import "@limitbreak/creator-token-standards/src/access/OwnableBasic.sol";
  * @notice There will be one of those contracts deployed for each event that has tickets to sell.
  */
 contract NFTTicketCollection is ERC1155C, OwnableBasic {
-    constructor(string memory uri_) ERC1155OpenZeppelin(uri_) {}
+    uint256 public eventStart;
+
+    /**
+     * @notice Constructor of the contract.
+     * @param uri_ The URI of the metadata of the tickets.
+     * @param eventStart_ The unix timestamp of the start of the event.
+     */
+    constructor(
+        string memory uri_,
+        uint256 eventStart_
+    ) ERC1155OpenZeppelin(uri_) {
+        eventStart = eventStart_;
+    }
 
     /**
      * @notice Mint new tickets. Only the owner of the contract == organizer of the event can mint tickets.
@@ -36,5 +48,13 @@ contract NFTTicketCollection is ERC1155C, OwnableBasic {
      */
     function burn(uint256 tokenId, uint256 amount) external onlyOwner {
         _burn(msg.sender, tokenId, amount);
+    }
+
+    /**
+     * @notice Change the event start date. Only the owner of the contract == organizer of the event can change the start date.
+     * @param newEventStart The new unix timestamp of the start of the event.
+     */
+    function changeEventStart(uint256 newEventStart) external onlyOwner {
+        eventStart = newEventStart;
     }
 }
