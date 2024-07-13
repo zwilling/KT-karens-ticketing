@@ -25,8 +25,6 @@ export default function Discover() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    console.log('Use Effect called');
-
     // get all available events
     fetch(`https://testnets-api.opensea.io/api/v2/collections?chain=${chainIDOpenSea}&creator_username=${contractDeployer}`, optionsOpenSeaAPI)
       .then(response => response.json())
