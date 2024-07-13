@@ -5,7 +5,7 @@ import { Urbanist_400Regular, Urbanist_500Medium, Urbanist_600SemiBold } from '@
 import { useEffect, useState } from "react";
 
 import { formatDate } from "../utils/formatDate";
-import TicketForSale from "../components/ticket-for-sale";
+import TicketForSaleItem from "../components/ticket-for-sale";
 
 import { useRoute } from '@react-navigation/native';
 
@@ -13,10 +13,11 @@ import { chainIDOpenSea, optionsOpenSeaAPI, defaultTicketTypeID } from "./parame
 
 export default function Tickets() {
   const route = useRoute();
-  const eventId = route.params?.eventId;
+  const eventId = route.params?.eventID;
   const eventAddress = route.params?.eventAddress;
 
   const [nftData, setNftData] = useState(undefined);
+  const [saleListings, setSellListings] = useState([]);
 
   let [fontsLoaded] = useFonts({
     Urbanist_400Regular,
@@ -25,10 +26,16 @@ export default function Tickets() {
   });
 
   useEffect(() => {
-    // API Call to get event data
+    // get event data
     fetch(`https://testnets-api.opensea.io/api/v2/chain/${chainIDOpenSea}/contract/${eventAddress}/nfts/${defaultTicketTypeID}`, optionsOpenSeaAPI)
       .then(response => response.json())
       .then(response => setNftData(response['nft']))
+      .catch(err => console.error(err));
+
+    // get ticket sell listings
+    fetch(`https://testnets-api.opensea.io/api/v2/listings/collection/${eventId}/all`, optionsOpenSeaAPI)
+      .then(response => response.json())
+      .then(response => setSellListings(response['listings']))
       .catch(err => console.error(err));
   }, []);
 
@@ -55,7 +62,11 @@ export default function Tickets() {
           </View>
         </View>
 
-        <TicketForSale></TicketForSale>
+        <View>
+          {saleListings.slice(0, 3).map((listing, index) => (
+            <TicketForSaleItem listing={listing} key={index} />
+          ))}
+        </View>
 
       </View>
     )
