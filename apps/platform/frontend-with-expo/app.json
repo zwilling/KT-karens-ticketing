@@ -1,0 +1,10 @@
+{
+  "name": "frontend-with-expo",
+  "slug": "frontend-with-expo",
+  "plugins": [
+    "expo-router"
+  ],
+  "web": {
+    "bundler": "metro"
+  }
+}
