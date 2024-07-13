@@ -14,5 +14,13 @@
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "dotenv": "^16.4.5",
     "hardhat": "^2.22.6"
+  },
+  "dependencies": {
+    "@capacitor/app": "6.0.0",
+    "@capacitor/cli": "6.1.0",
+    "@capacitor/core": "6.1.0",
+    "@capacitor/haptics": "6.0.0",
+    "@capacitor/keyboard": "6.0.1",
+    "@capacitor/status-bar": "6.0.0"
   }
 }
