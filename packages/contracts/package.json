@@ -16,6 +16,7 @@
     "hardhat": "^2.22.6"
   },
   "dependencies": {
+    "@api/opensea": "file:.api/apis/opensea",
     "@capacitor/app": "6.0.0",
     "@capacitor/cli": "6.1.0",
     "@capacitor/core": "6.1.0",
