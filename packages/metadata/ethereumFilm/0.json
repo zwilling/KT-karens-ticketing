@@ -1,0 +1,22 @@
+{
+  "name": "VITALIK: AN ETHEREUM STORY",
+  "description": "Cinema tickets for the movie 'VITALIK: AN ETHEREUM STORY'. Taking place in 'The EGG', Brussels, Belgium",
+  "image": "https://raw.githubusercontent.com/zwilling/karen/main/packages/metadata/ethereumFilm/image.jpg",
+  "decimals": 0,
+  "external_url": "https://optimist.co/films/vitalik-an-ethereum-story/",
+  "attributes": [
+    {
+      "trait_type": "Venue",
+      "value": "The EGG, Brussels, Belgium"
+    },
+    {
+      "trait_type": "Event Name",
+      "value": "VITALIK: AN ETHEREUM STORY"
+    },
+    {
+      "display_type": "date",
+      "trait_type": "Date",
+      "value": 1731351600
+    }
+  ]
+}
