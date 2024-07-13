@@ -2,6 +2,7 @@ import React, { useEffect } from "react"
 import Image from "next/image"
 import { StyleSheet } from "react-native"
 import SearchBar from "./searchBar"
+import { useNavigation } from "../contexts/NavigationContext"
 
 import { Link, usePathname } from 'expo-router';
 
@@ -13,7 +14,7 @@ export default function Header() {
   const isHomePage = pathname === '/';
 
   useEffect(() => {
-    console.log(pathname);
+    console.log("Path name: ", pathname);
   })
 
   return (

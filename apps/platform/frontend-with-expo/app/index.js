@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from "react-native"
 import { chainIDOpenSea, contractDeployer, optionsOpenSeaAPI, defaultTicketTypeID } from "./parameters"
 import { useEffect, useState } from "react"
 import AppLoading from 'expo-app-loading';
+import Loading from "../components/loading";
 import { useFonts } from 'expo-font';
 
 import TicketListItem from "../components/ticket-list-item";
@@ -17,6 +18,7 @@ export default function Discover() {
   });
 
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // get all available events
@@ -37,6 +39,7 @@ export default function Discover() {
         }
         // console.log('Response with NFTs', response);
         setEvents(response['collections']);
+        setLoading(false);
       })
       .catch(err => console.error(err));
   }, [])
@@ -44,19 +47,24 @@ export default function Discover() {
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.trendingTitle}>Trending</Text>
-        <Text style={{ fontSize: 16, fontFamily: 'Urbanist_400Regular', fontWeight: '400' }}>Coming Up</Text>
+    if (loading) {
+      return <Loading />
+    } else {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.trendingTitle}>Trending</Text>
+          <Text style={{ fontSize: 16, fontFamily: 'Urbanist_400Regular', fontWeight: '400' }}>Coming Up</Text>
 
-        <View>
-          {events.slice(0, 3).map((event, index) => (
-            <TicketListItem event={event} key={index} />
-          ))}
+          <View>
+            {events.slice(0, 3).map((event, index) => (
+              <TicketListItem event={event} key={index} />
+            ))}
+          </View>
+
         </View>
+      )
+    }
 
-      </View>
-    )
   }
 }
 
@@ -67,6 +75,7 @@ const styles = StyleSheet.create({
     height: "100vh",
     width: "80%",
     margin: "auto",
+    paddingTop: 20
   },
   trendingTitle: {
     fontSize: 24,
