@@ -22,11 +22,17 @@ const config: HardhatUserConfig = {
       url: `https://zircuit1.p2pify.com`,
       accounts: accounts,
     },
+    baseSepolia: {
+      url: 'https://sepolia.base.org',
+      accounts: accounts,
+      gasPrice: 1000000000,
+    },
   },
   etherscan: {
     apiKey: {
       sepolia: process.env.ETHERSCAN_API_KEY!,
       zircuit: process.env.ZIRCUIT_EXPLORER_API_KEY!,
+      baseSepolia: process.env.BASE_BLOCKSCOUT_API_KEY!,
     },
     customChains: [
       {
@@ -43,6 +49,15 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://explorer.zircuit.com/api/contractVerifyHardhat",
           browserURL: "https://explorer.zircuit.com"
+        }
+      },
+      {
+        network: "baseSepolia",
+        chainId: 84532,
+        urls: {
+          // Using BlockScout here
+          apiURL: "https://base-sepolia.blockscout.com/api",
+          browserURL: "https://base-sepolia.blockscout.com"
         }
       },
     ]
