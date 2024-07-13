@@ -1,10 +1,9 @@
 import { StyleSheet, View, Text } from "react-native"
 
-import { eventsExample } from "../data/events"
-import { useEffect } from "react"
+import { chainIDOpenSea, contractDeployer, optionsOpenSeaAPI, defaultTicketTypeID } from "./parameters"
+import { useEffect, useState } from "react"
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
-// import opensea from '@api/opensea';
 
 import TicketListItem from "../components/ticket-list-item";
 
@@ -17,9 +16,30 @@ export default function Discover() {
     Urbanist_600SemiBold
   });
 
-  // useEffect(() => {
-    
-  // }, [])
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    // get all available events
+    fetch(`https://testnets-api.opensea.io/api/v2/collections?chain=${chainIDOpenSea}&creator_username=${contractDeployer}`, optionsOpenSeaAPI)
+      .then(response => response.json())
+      .then(async response => {
+        // get nft data for each event
+        for (let i = 0; i < response['collections'].length; i++) {
+          let event = response['collections'][i];
+          const nftResponse = await fetch(`https://testnets-api.opensea.io/api/v2/chain/${chainIDOpenSea}/contract/${event['contracts'][0]['address']}/nfts/${defaultTicketTypeID}`, optionsOpenSeaAPI)
+          if (nftResponse.status === 200) {
+            const nftData = await nftResponse.json();
+            response['collections'][i]['nft'] = nftData['nft'];
+          }
+          else {
+            throw new Error(`Failed to fetch NFT data for event ${event['name']}`);
+          }
+        }
+        // console.log('Response with NFTs', response);
+        setEvents(response['collections']);
+      })
+      .catch(err => console.error(err));
+  }, [])
 
   if (!fontsLoaded) {
     return <AppLoading />;
@@ -30,7 +50,7 @@ export default function Discover() {
         <Text style={{ fontSize: 16, fontFamily: 'Urbanist_400Regular', fontWeight: '400' }}>Coming Up</Text>
 
         <View>
-          {eventsExample.collections.slice(0, 3).map((event, index) => (
+          {events.slice(0, 3).map((event, index) => (
             <TicketListItem event={event} key={index} />
           ))}
         </View>
