@@ -120,7 +120,16 @@ describe("NFTTicketCollection", function () {
 
       await nftTicketCollection.mint(accounts.organizer.address, 0, 10);
 
-      await expect(nftTicketCollection.safeTransferFrom(accounts.organizer.address, accounts.buyer.address, 0, 2, Uint8Array.from([]))).to.be.revertedWith("NFTTicketCollection: Can not transfer after the event has started");
+      const pastTime = 1;
+      await nftTicketCollection.changeEventStart(pastTime);
+
+      await expect(nftTicketCollection.safeTransferFrom(
+        accounts.organizer.address,
+        accounts.buyer.address,
+        0,
+        2,
+        Uint8Array.from([])
+      )).to.be.revertedWith("NFTTicketCollection: Can not transfer after the event has started");
     });
 
   });
@@ -128,7 +137,7 @@ describe("NFTTicketCollection", function () {
   describe("Configuration", function () {
 
     it("Should be able to change event start", async function () {
-      const { nftTicketCollection, accounts, params } = await loadFixture(deployFixture);
+      const { nftTicketCollection, params } = await loadFixture(deployFixture);
       const newTime = params.EVENT_START + 1000;
 
       await nftTicketCollection.changeEventStart(newTime);

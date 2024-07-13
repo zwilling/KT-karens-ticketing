@@ -6,7 +6,7 @@ import "@limitbreak/creator-token-standards/src/token/erc1155/ERC1155OpenZeppeli
 import "@limitbreak/creator-token-standards/src/access/OwnableBasic.sol";
 
 // Uncomment this line to use console.log
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 /**
  * @title NFTTicketCollection The base contract for an NFT ticket collection.
@@ -56,5 +56,32 @@ contract NFTTicketCollection is ERC1155C, OwnableBasic {
      */
     function changeEventStart(uint256 newEventStart) external onlyOwner {
         eventStart = newEventStart;
+    }
+
+    /**
+     * @dev Transfers `amount` tokens of token type `id` from `from` to `to`.
+     *
+     * Emits a {TransferSingle} event.
+     *
+     * Requirements:
+     *
+     * - `to` cannot be the zero address.
+     * - `from` must have a balance of tokens of type `id` of at least `amount`.
+     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
+     * acceptance magic value.
+     */
+    function _safeTransferFrom(
+        address from,
+        address to,
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) internal virtual override {
+        require(
+            block.timestamp <= eventStart,
+            "NFTTicketCollection: Can not transfer after the event has started"
+        );
+
+        super._safeTransferFrom(from, to, id, amount, data);
     }
 }
