@@ -19,5 +19,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    borderBottomWidth: 2, // Specify the width of the bottom border
+    borderBottomColor: "#000", // Specify the color of the bottom border
   },
 })
