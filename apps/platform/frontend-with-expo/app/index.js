@@ -1,14 +1,18 @@
 import { StyleSheet, View, Text } from "react-native"
 
 import { eventsExample } from "../data/events"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
-// import opensea from '@api/opensea';
 
 import TicketListItem from "../components/ticket-list-item";
 
 import { Urbanist_400Regular, Urbanist_500Medium, Urbanist_600SemiBold } from '@expo-google-fonts/urbanist';
+
+// TODO: Hardcoded data to be replaced with actual data
+const chainIDOpenSea = 'base_sepolia';
+const contractDeployer = 'crypto-cinema';
+const optionsOpenSeaAPI = { method: 'GET', headers: { accept: 'application/json' } };
 
 export default function Discover() {
   let [fontsLoaded] = useFonts({
@@ -17,9 +21,17 @@ export default function Discover() {
     Urbanist_600SemiBold
   });
 
-  // useEffect(() => {
-    
-  // }, [])
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    console.log('Use Effect called');
+
+    // get all available events
+    fetch(`https://testnets-api.opensea.io/api/v2/collections?chain=${chainIDOpenSea}&creator_username=${contractDeployer}`, optionsOpenSeaAPI)
+      .then(response => response.json())
+      .then(response => setEvents(response['collections']))
+      .catch(err => console.error(err));
+  }, [])
 
   if (!fontsLoaded) {
     return <AppLoading />;
@@ -30,7 +42,7 @@ export default function Discover() {
         <Text style={{ fontSize: 16, fontFamily: 'Urbanist_400Regular', fontWeight: '400' }}>Coming Up</Text>
 
         <View>
-          {eventsExample.collections.slice(0, 3).map((event, index) => (
+          {events.slice(0, 3).map((event, index) => (
             <TicketListItem event={event} key={index} />
           ))}
         </View>
