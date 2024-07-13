@@ -1,7 +1,7 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
 const NFTTicketCollectionModule = buildModule("NFTTicketCollection", (m) => {
-  const uri = m.getParameter("uri", "https://karen-tickets.com");
+  const uri = m.getParameter("uri", "https://raw.githubusercontent.com/zwilling/karen/main/packages/metadata/ethereumFilm/0.jpg");
   const ticketID = m.getParameter("ticketID", 0);
   const initialAmount = m.getParameter("amount", 10);
   // const feeLoadValue = m.getParameter("lockedAmount", ONE_GWEI);
