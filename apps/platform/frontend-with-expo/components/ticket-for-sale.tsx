@@ -1,23 +1,33 @@
 import { useState } from "react";
 import { View, Text, Image, Pressable, Modal, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { formatUnits } from 'ethers';
 
-export default function TicketForSaleItem({ listing, key }) {
+export default function TicketForSaleItem({ listing }) {
     const [isModalVisible, setModalVisibility] = useState(false);
 
     const toggleModal = () => {
         setModalVisibility(!isModalVisible);
     }
 
+    console.log('listing', listing);
+
+    const amount =
+        Number.parseInt(listing.protocol_data.parameters.totalOriginalConsiderationItems)
+        - Number.parseInt(listing.protocol_data.parameters.counter);
+    const price = formatUnits(listing.price.current.value, listing.price.current.decimals);
+    const currency = listing.price.current.currency;
+    // TODO get offerer address and display name from ENS
+
     return (
         <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10, width: "100%" }}>
             <Image source={{ uri: "https://i.imgur.com/m0w4b4C.png" }} style={{ width: 80, height: 80, borderRadius: "100%" }} alt="ticket" />
             <View style={{ flexGrow: 1, padding: 10 }}>
-                <Text>1 ticket</Text>
+                <Text>{`${amount} Tickets`}</Text>
                 <Text>Official Organizer</Text>
             </View>
             <Pressable onPress={toggleModal} style={{ backgroundColor: "black", padding: 10, borderRadius: 10 }}>
-                <Text style={{ color: "white" }}>Buy for 19,65</Text>
+                <Text style={{ color: "white" }}>{`${price} ${currency}`}</Text>
             </Pressable>
 
             {/* Modal */}
