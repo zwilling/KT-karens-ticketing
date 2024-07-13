@@ -20,12 +20,12 @@ describe("NFTTicketCollection", function () {
     // const eventTime = (await time.latest()) + ONE_YEAR_IN_SECS;
 
     // Contracts are deployed using the first signer/account by default
-    const [deployer, organizer, buyer] = await hre.ethers.getSigners();
+    const [deployer, organizer, buyer, attacker] = await hre.ethers.getSigners();
 
     const NFTTicketCollection = await hre.ethers.getContractFactory("NFTTicketCollection");
     const nftTicketCollection = await NFTTicketCollection.connect(organizer).deploy(URI) as NFTTicketCollection;
 
-    return { deployer, organizer, buyer, nftTicketCollection, URI };
+    return { deployer, organizer, buyer, attacker, nftTicketCollection, URI };
   }
 
   describe("Deployment", function () {
@@ -42,4 +42,44 @@ describe("NFTTicketCollection", function () {
     });
 
   });
+
+  describe("Minting", function () {
+
+    it("Should be able to mint tickets for someone", async function () {
+      const { nftTicketCollection, organizer } = await loadFixture(deployFixture);
+
+      await nftTicketCollection.mint(organizer.address, 0, 10);
+
+      expect(await nftTicketCollection.balanceOf(organizer, 0)).to.equal(10);
+    });
+
+    it("Should fail to mint when it is not the organizer", async function () {
+      const { nftTicketCollection, attacker } = await loadFixture(deployFixture);
+
+      await expect(nftTicketCollection.connect(attacker).mint(attacker.address, 0, 10)).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+
+  });
+
+  describe("Burning", function () {
+
+    it("Should be able to burn tickets", async function () {
+      const { nftTicketCollection, organizer } = await loadFixture(deployFixture);
+
+      await nftTicketCollection.mint(organizer.address, 0, 10);
+      await nftTicketCollection.burn(0, 5);
+
+      expect(await nftTicketCollection.balanceOf(organizer, 0)).to.equal(5);
+    });
+
+    it("Should fail to burn tickets not in the organizers wallet", async function () {
+      const { nftTicketCollection, organizer, attacker } = await loadFixture(deployFixture);
+
+      await nftTicketCollection.mint(organizer.address, 0, 10);
+
+      await expect(nftTicketCollection.connect(attacker).burn(0, 5)).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+
+  });
+
 });
