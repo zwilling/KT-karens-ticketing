@@ -12,6 +12,7 @@ import { Urbanist_400Regular, Urbanist_500Medium, Urbanist_600SemiBold } from '@
 // TODO: Hardcoded data to be replaced with actual data
 const chainIDOpenSea = 'base_sepolia';
 const contractDeployer = 'crypto-cinema';
+const defaultTicketTypeID = 0;
 const optionsOpenSeaAPI = { method: 'GET', headers: { accept: 'application/json' } };
 
 export default function Discover() {
@@ -29,7 +30,22 @@ export default function Discover() {
     // get all available events
     fetch(`https://testnets-api.opensea.io/api/v2/collections?chain=${chainIDOpenSea}&creator_username=${contractDeployer}`, optionsOpenSeaAPI)
       .then(response => response.json())
-      .then(response => setEvents(response['collections']))
+      .then(async response => {
+        // get nft data for each event
+        for (let i = 0; i < response['collections'].length; i++) {
+          let event = response['collections'][i];
+          const nftResponse = await fetch(`https://testnets-api.opensea.io/api/v2/chain/${chainIDOpenSea}/contract/${event['contracts'][0]['address']}/nfts/${defaultTicketTypeID}`, optionsOpenSeaAPI)
+          if (nftResponse.status === 200) {
+            const nftData = await nftResponse.json();
+            response['collections'][i]['nft'] = nftData['nft'];
+          }
+          else {
+            throw new Error(`Failed to fetch NFT data for event ${event['name']}`);
+          }
+        }
+        // console.log('Response with NFTs', response);
+        setEvents(response['collections']);
+      })
       .catch(err => console.error(err));
   }, [])
 
