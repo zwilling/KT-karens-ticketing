@@ -6,8 +6,14 @@ import {ticketData} from "../data/ticketData";
 import { useEffect } from "react";
 
 import { formatDate } from "../utils/formatDate";
+import TicketForSale from "../components/ticket-for-sale";
+
+import { useRoute } from '@react-navigation/native';
 
 export default function Tickets() {
+  const route = useRoute();
+  const eventId = route.params?.eventId;
+
   let [fontsLoaded] = useFonts({
     Urbanist_400Regular,
     Urbanist_500Medium,
@@ -15,7 +21,7 @@ export default function Tickets() {
   });
 
   useEffect(() => {
-    console.log("Ticket data: ", ticketData);
+    // API Call
   }, []); 
 
   if (!fontsLoaded) {
@@ -23,21 +29,26 @@ export default function Tickets() {
   } else {
     return (
       <View style={styles.container}>
-        <View style={styles.childComponent}>
-          <Image source={{ uri: ticketData.nft.display_image_url }} style={{ width: 400, height: 300, borderRadius: 10 }} alt={ticketData.nft.name}></Image>
+        <View>
+          <View style={styles.childComponent}>
+            <Image source={{ uri: ticketData.nft.display_image_url }} style={{ width: 400, height: 300, borderRadius: 10 }} alt={ticketData.nft.name}></Image>
+          </View>
+
+          <View style={styles.childComponent}>
+            <Text style={styles.title}>{ticketData.nft.name}</Text>
+          </View>
+
+          <View style={styles.childComponent}>
+            <Text style={{ fontSize: 16, fontWeight: "semibold" }}>{formatDate(ticketData.nft.traits[2].value)}</Text>
+          </View>
+
+          <View style={styles.childComponent}>
+            <Text style={{ fontSize: 16, fontWeight: "semibold" }}>{ticketData.nft.traits[0].value}</Text>
+          </View>
         </View>
 
-        <View style={styles.childComponent}>
-          <Text style={styles.title}>{ticketData.nft.name}</Text>
-        </View>
+        <TicketForSale></TicketForSale>
 
-        <View style={styles.childComponent}>
-          <Text style={{ fontSize: 16, fontWeight: "semibold" }}>{formatDate(ticketData.nft.traits[2].value)}</Text>
-        </View>
-
-        <View style={styles.childComponent}>
-          <Text style={{ fontSize: 16, fontWeight: "semibold" }}>{ticketData.nft.traits[0].value}</Text>
-        </View>
       </View>
     )
   }
@@ -48,8 +59,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 24,
     height: "100vh",
+    width: "80%",
+    position: "relative",
     flexDirection: "column",
     flexGap: 10,
+    margin: "auto",
   },
   title: {
     fontSize: 24,
