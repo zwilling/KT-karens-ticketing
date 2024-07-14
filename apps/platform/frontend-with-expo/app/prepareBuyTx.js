@@ -5,7 +5,7 @@ import Toast from 'react-native-toast-message';
 /**
  * Ask OpenSea API to prepare the transaction to buy a ticket from a listing
  */
-export async function prepareBuyTx({ listingHash, protocolAddr, fulfillerAddr, router, onError }) {
+export async function prepareBuyTx({ listingHash, protocolAddr, fulfillerAddr, callback, router, onError }) {
   try {
     const options = {
       method: 'POST',
@@ -19,14 +19,13 @@ export async function prepareBuyTx({ listingHash, protocolAddr, fulfillerAddr, r
         fulfiller: { address: fulfillerAddr }
       })
     };
-    
+
     const response = await fetch('https://testnets-api.opensea.io/api/v2/listings/fulfillment_data', options);
     console.log("First response: ", response);
 
     const data = await response.json();
     console.log("Data: ", data);
-
-    const { to, value, data: inputData } = data.fulfillmentData;
+    callback(response.fulfillment_data.transaction);
 
     // stuff happens here!
 
