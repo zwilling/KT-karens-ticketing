@@ -70,7 +70,7 @@ export default function Tickets() {
               </View>
             </View>
 
-            <View>
+            <View style={{ width: "100%" }}>
               {saleListings.slice(0, 3).map((listing, index) => (
                 <TicketForSaleItem listing={listing} key={index} />
               ))}
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 24,
     height: "100vh",
-    width: "80%",
+    width: "100%",
     position: "relative",
     flexDirection: "column",
     flexGap: 10,

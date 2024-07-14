@@ -163,7 +163,8 @@ export default function TicketForSaleItem({ listing }) {
         console.log('wallet_info', 'no wallet connected');
     }
 
-    return (
+  return (
+      <View style={{ width: "100%" }}>
         <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10, width: "100%" }}>
             <Image source={{ uri: avatarURL }} style={{ width: 80, height: 80, borderRadius: "100%" }} alt="ticket" />
             <View style={{ flexGrow: 1, padding: 10 }}>
@@ -173,32 +174,33 @@ export default function TicketForSaleItem({ listing }) {
             <Pressable onPress={toggleModal} style={{ backgroundColor: "black", padding: 10, borderRadius: 10 }}>
                 <Text style={{ color: "white" }}>{`${price} ${currency}`}</Text>
             </Pressable>
+        </View>
 
-            {/* Modal */}
-            <Modal
-                transparent={true}
-                visible={isModalVisible}
-                onRequestClose={() => {
-                    setModalVisibility(!isModalVisible);
-                }}>
+          {/* Modal */}
+          <Modal
+              transparent={true}
+              visible={isModalVisible}
+              onRequestClose={() => {
+                  setModalVisibility(!isModalVisible);
+              }}>
 
-                <TouchableOpacity activeOpacity={1} onPress={() => setModalVisibility(!isModalVisible)} style={styles.overlay}>
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <Icon name="times" size={30} color="#000" style={{ position: 'absolute', top: 10, right: 10 }} />
+              <TouchableOpacity activeOpacity={1} onPress={() => setModalVisibility(!isModalVisible)} style={styles.overlay}>
+                  <View style={styles.centeredView}>
+                      <View style={styles.modalView}>
+                          <Icon name="times" size={30} color="#000" style={{ position: 'absolute', top: 10, right: 10 }} />
 
-                            <View style={{ flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 10, marginBottom: 20 }}>
-                                <Text style={[styles.textStyle, { fontSize: 20, fontWeight: "bold" }]}>Smart Wallet Flow</Text>
-                                <Text style={[styles.textStyle, { fontSize: 18, color: "#58566A" }]}>Smart wallet flow starts here</Text>
-                            </View>
+                          <View style={{ flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 10, marginBottom: 20 }}>
+                              <Text style={[styles.textStyle, { fontSize: 20, fontWeight: "bold" }]}>Smart Wallet Flow</Text>
+                              <Text style={[styles.textStyle, { fontSize: 18, color: "#58566A" }]}>Smart wallet flow starts here</Text>
+                          </View>
 
-                            <DynamicWidget />
-                        </View>
+                          <DynamicWidget />
+                      </View>
 
-                    </View>
-                </TouchableOpacity>
+                  </View>
+              </TouchableOpacity>
 
-            </Modal>
+          </Modal>
         </View>
     )
 }
