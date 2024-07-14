@@ -2,20 +2,16 @@ import { useState, useEffect } from "react";
 import { View, Text, Image, Pressable, Modal, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { formatUnits } from 'ethers';
-// import { queryEnsData } from "../app/ens";
 
 import { useEnsName, useEnsAvatar } from "wagmi";
-import { chainID } from "../app/parameters";
 import { sepolia } from 'wagmi/chains'
 import { normalize } from 'viem/ens'
+
+import { prepareBuyTx } from "../app/prepareBuyTx";
 
 export default function TicketForSaleItem({ listing }) {
     const [isModalVisible, setModalVisibility] = useState(false);
     let avatarURL = "https://i.imgur.com/m0w4b4C.png";
-
-    const toggleModal = () => {
-        setModalVisibility(!isModalVisible);
-    }
 
     const amount =
         Number.parseInt(listing.protocol_data.parameters.totalOriginalConsiderationItems)
@@ -37,6 +33,17 @@ export default function TicketForSaleItem({ listing }) {
         if (ensAvatarData) {
             avatarURL = ensAvatarData;
         }
+    }
+
+    const toggleModal = () => {
+        setModalVisibility(!isModalVisible);
+
+        // TODO: move after wallet connection
+        prepareBuyTx({
+            listingHash: listing.order_hash,
+            protocolAddr: listing.protocol_address,
+            fulfillerAddr: '0xCAEf9F8701aA4A1a8D8564D6871bf5bf8ACA9c1e',
+        });
     }
 
     return (
