@@ -2,6 +2,7 @@ import Header from "../components/header";
 import { View } from "react-native";
 import { Slot } from "expo-router";
 import "../styles/global.css";
+import Toast from 'react-native-toast-message';
 
 import {
   EthersExtension,
@@ -39,6 +40,7 @@ export default function Layout() {
         <Header></Header>
         <Slot />
       </View>
+      <Toast/>
     </DynamicContextProvider>
 
   )

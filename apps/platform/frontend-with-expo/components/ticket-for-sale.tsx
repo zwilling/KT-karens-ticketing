@@ -12,7 +12,14 @@ import { normalize } from 'viem/ens'
 
 import { prepareBuyTx } from "../app/prepareBuyTx";
 
+import { useRouter } from 'expo-router';
+import {useRoute} from '@react-navigation/native';
+
+
 export default function TicketForSaleItem({ listing }) {
+  const router = useRouter(); 
+  const route = useRoute();
+
   const [isModalVisible, setModalVisibility] = useState(false);
   let avatarURL = "https://i.imgur.com/m0w4b4C.png";
 
@@ -49,6 +56,8 @@ export default function TicketForSaleItem({ listing }) {
           listingHash: listing.order_hash,
           protocolAddr: listing.protocol_address,
           fulfillerAddr: '0xCAEf9F8701aA4A1a8D8564D6871bf5bf8ACA9c1e',
+          router,
+          route
         });
         // actually start transaction
       } 
