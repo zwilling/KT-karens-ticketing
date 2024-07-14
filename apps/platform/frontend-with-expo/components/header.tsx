@@ -13,10 +13,6 @@ export default function Header() {
 
   const isHomePage = pathname === '/';
 
-  useEffect(() => {
-    console.log("Path name: ", pathname);
-  })
-
   return (
     <div style={styles.header}>
       <Link href="/">

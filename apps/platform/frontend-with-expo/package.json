@@ -1,6 +1,10 @@
 {
   "dependencies": {
     "@api/opensea": "file:.api/apis/opensea",
+    "@dynamic-labs/ethereum": "^2.3.1",
+    "@dynamic-labs/ethers-v6": "^2.3.1",
+    "@dynamic-labs/sdk-api": "^0.0.487",
+    "@dynamic-labs/sdk-react-core": "^2.3.1",
     "@expo-google-fonts/urbanist": "^0.2.3",
     "@expo/metro-runtime": "~3.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",

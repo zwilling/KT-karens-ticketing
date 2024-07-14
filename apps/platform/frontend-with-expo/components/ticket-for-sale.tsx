@@ -2,6 +2,8 @@ import { useState } from "react";
 import { View, Text, Image, Pressable, Modal, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import { DynamicWidget } from "../lib/dynamic";
+
 export default function TicketForSale() {
   const [isModalVisible, setModalVisibility] = useState(false);
   
@@ -37,19 +39,22 @@ export default function TicketForSale() {
                 <Text style={[styles.textStyle, { fontSize: 20, fontWeight: "bold" }]}>Smart Wallet Flow</Text>
                 <Text style={[styles.textStyle, { fontSize: 18, color: "#58566A" }]}>Smart wallet flow starts here</Text>
               </View>
-              <Pressable
+              <DynamicWidget style={[styles.button, styles.signUpButton]}>
+                <Text style={styles.textStyle}>Sign Up</Text>
+              </DynamicWidget>
+              {/* <Pressable
                 style={[styles.button, styles.signUpButton]}
                 onPress={() => setModalVisibility(!isModalVisible)}
               >
                 <Text style={styles.textStyle}>Sign Up</Text>
-              </Pressable>
+              </Pressable> */}
 
-              <Pressable
+              {/* <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => setModalVisibility(!isModalVisible)}
               >
                 <Text style={[styles.textStyle, { color: "white" }]}>Log In</Text>
-              </Pressable>
+              </Pressable> */}
             </View>
           </View>
         </TouchableOpacity>
