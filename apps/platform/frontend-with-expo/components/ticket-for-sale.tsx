@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { formatUnits } from 'ethers';
 
 import { DynamicWidget } from "../lib/dynamic";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 import { useEnsName, useEnsAvatar } from "wagmi";
 import { sepolia } from 'wagmi/chains'
@@ -12,21 +13,16 @@ import { normalize } from 'viem/ens'
 import { prepareBuyTx } from "../app/prepareBuyTx";
 
 export default function TicketForSaleItem({ listing }) {
-  const [isModalVisible, setModalVisibility] = useState(false);
-  let avatarURL = "https://i.imgur.com/m0w4b4C.png";
+    const [isModalVisible, setModalVisibility] = useState(false);
+    let avatarURL = "https://i.imgur.com/m0w4b4C.png";
 
-  const amount =
-      Number.parseInt(listing.protocol_data.parameters.totalOriginalConsiderationItems)
-    - Number.parseInt(listing.protocol_data.parameters.counter);
-  
-  const price = formatUnits(listing.price.current.value, listing.price.current.decimals);
-  const currency = listing.price.current.currency;
-  const offerer = listing.protocol_data.parameters.offerer;
+    const amount =
+        Number.parseInt(listing.protocol_data.parameters.totalOriginalConsiderationItems)
+        - Number.parseInt(listing.protocol_data.parameters.counter);
 
-  const { data: ensNameData, error: ensNameError } = useEnsName({ address: offerer, chainId: sepolia.id });
-  if (ensNameError) {
-    console.error('ensNameError', ensNameError);
-  }
+    const price = formatUnits(listing.price.current.value, listing.price.current.decimals);
+    const currency = listing.price.current.currency;
+    const offerer = listing.protocol_data.parameters.offerer;
 
   const { data: ensAvatarData, error: ensAvatarError } = useEnsAvatar({ name: normalize(ensNameData), chainId: sepolia.id });
   if (ensNameData) {
@@ -67,50 +63,89 @@ export default function TicketForSaleItem({ listing }) {
       body: '{"identifier":"mpascualacheson2@gmail.com","type":"email", "chain":"ETH", ,"socialProvider":"emailOnly"}'
     }
 
-    fetch(`https://app.dynamicauth.com/api/v0/environments/${'20c52e9d-ac24-44d6-b10a-6754d033224e'}/embeddedWallets`, options)
-    .then(response => response.json())
-    .then(response => console.log(response))
-    .catch(err => console.error(err));
-  }
+    const { data: ensAvatarData, error: ensAvatarError } = useEnsAvatar({ name: normalize(ensNameData), chainId: sepolia.id });
+    if (ensNameData) {
+        if (ensAvatarError) {
+            console.error('ensAvatarError', ensAvatarError);
+        }
+        if (ensAvatarData) {
+            avatarURL = ensAvatarData;
+        }
+    }
 
-  return (
-    <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10, width: "100%" }}>
-      <Image source={{ uri: avatarURL }} style={{ width: 80, height: 80, borderRadius: "100%" }} alt="ticket" />
-      <View style={{ flexGrow: 1, padding: 10 }}>
-        <Text>{`${amount} Tickets`}</Text>
-        <Text>{ensNameData ?? "..."}</Text>
-      </View>
-      <Pressable onPress={toggleModal} style={{ backgroundColor: "black", padding: 10, borderRadius: 10 }}>
-          <Text style={{ color: "white" }}>{`${price} ${currency}`}</Text>
-      </Pressable>
+    const toggleModal = () => {
+        if (!isModalVisible) {
+            preSignUpWallet();
+        }
+        setModalVisibility(!isModalVisible);
 
-      {/* Modal */}
-      <Modal
-        transparent={true}
-        visible={isModalVisible}
-        onRequestClose={() => {
-          setModalVisibility(!isModalVisible);
-        }}>
-    
-        <TouchableOpacity activeOpacity={1} onPress={toggleModal} style={styles.overlay}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Icon name="times" size={30} color="#000" style={{ position: 'absolute', top: 10, right: 10 }} />
+        // TODO: move after wallet connection
+        prepareBuyTx({
+            listingHash: listing.order_hash,
+            protocolAddr: listing.protocol_address,
+            fulfillerAddr: '0xCAEf9F8701aA4A1a8D8564D6871bf5bf8ACA9c1e',
+        });
+    }
 
-              <View style={{ flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 10, marginBottom: 20 }}>
-                <Text style={[styles.textStyle, { fontSize: 20, fontWeight: "bold" }]}>Smart Wallet Flow</Text>
-                <Text style={[styles.textStyle, { fontSize: 18, color: "#58566A" }]}>Smart wallet flow starts here</Text>
-              </View>
-            
-              <DynamicWidget />
+    const preSignUpWallet = () => {
+        const options = {
+            method: "POST",
+            headers: { Authorization: 'Bearer <token>', 'Content-Type': 'application/json' },
+            body: '{"identifier":"mpascualacheson1@gmail.com","type":"email", "chain":"ETH", ,"socialProvider":"emailOnly"}'
+        }
+
+        fetch(`https://app.dynamicauth.com/api/v0/environments/${'20c52e9d-ac24-44d6-b10a-6754d033224e'}/embeddedWallets`, options)
+            .then(response => response.json())
+            .then(response => console.log(response))
+            .catch(err => console.error(err));
+    }
+
+    const { primaryWallet } = useDynamicContext();
+    if (primaryWallet) {
+        console.log('wallet_info', primaryWallet.connected, primaryWallet.address);
+    }
+    else {
+        console.log('wallet_info', 'no wallet connected');
+    }
+
+    return (
+        <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10, width: "100%" }}>
+            <Image source={{ uri: avatarURL }} style={{ width: 80, height: 80, borderRadius: "100%" }} alt="ticket" />
+            <View style={{ flexGrow: 1, padding: 10 }}>
+                <Text>{`${amount} Tickets`}</Text>
+                <Text>{ensNameData ?? "..."}</Text>
             </View>
-        
-          </View>
-        </TouchableOpacity>
+            <Pressable onPress={toggleModal} style={{ backgroundColor: "black", padding: 10, borderRadius: 10 }}>
+                <Text style={{ color: "white" }}>{`${price} ${currency}`}</Text>
+            </Pressable>
 
-      </Modal>
-    </View>
-  )
+            {/* Modal */}
+            <Modal
+                transparent={true}
+                visible={isModalVisible}
+                onRequestClose={() => {
+                    setModalVisibility(!isModalVisible);
+                }}>
+
+                <TouchableOpacity activeOpacity={1} onPress={toggleModal} style={styles.overlay}>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Icon name="times" size={30} color="#000" style={{ position: 'absolute', top: 10, right: 10 }} />
+
+                            <View style={{ flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 10, marginBottom: 20 }}>
+                                <Text style={[styles.textStyle, { fontSize: 20, fontWeight: "bold" }]}>Smart Wallet Flow</Text>
+                                <Text style={[styles.textStyle, { fontSize: 18, color: "#58566A" }]}>Smart wallet flow starts here</Text>
+                            </View>
+
+                            <DynamicWidget />
+                        </View>
+
+                    </View>
+                </TouchableOpacity>
+
+            </Modal>
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
