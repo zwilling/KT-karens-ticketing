@@ -7,10 +7,11 @@ import { formatUnits } from 'ethers';
 import { useEnsName, useEnsAvatar } from "wagmi";
 import { chainID } from "../app/parameters";
 import { sepolia } from 'wagmi/chains'
+import { normalize } from 'viem/ens'
 
 export default function TicketForSaleItem({ listing }) {
     const [isModalVisible, setModalVisibility] = useState(false);
-    const [ensData, setEnsData] = useState(undefined);
+    let avatarURL = "https://i.imgur.com/m0w4b4C.png";
 
     const toggleModal = () => {
         setModalVisibility(!isModalVisible);
@@ -23,14 +24,24 @@ export default function TicketForSaleItem({ listing }) {
     const currency = listing.price.current.currency;
     const offerer = listing.protocol_data.parameters.offerer;
 
-    const { data: ensNameData, error: ensNameError } = useEnsName({ address: offerer, chainId: sepolia.id })
+    const { data: ensNameData, error: ensNameError } = useEnsName({ address: offerer, chainId: sepolia.id });
     if (ensNameError) {
         console.error('ensNameError', ensNameError);
     }
 
+    const { data: ensAvatarData, error: ensAvatarError } = useEnsAvatar({ name: normalize(ensNameData), chainId: sepolia.id });
+    if (ensNameData) {
+        if (ensAvatarError) {
+            console.error('ensAvatarError', ensAvatarError);
+        }
+        if (ensAvatarData) {
+            avatarURL = ensAvatarData;
+        }
+    }
+
     return (
         <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10, width: "100%" }}>
-            <Image source={{ uri: "https://i.imgur.com/m0w4b4C.png" }} style={{ width: 80, height: 80, borderRadius: "100%" }} alt="ticket" />
+            <Image source={{ uri: avatarURL }} style={{ width: 80, height: 80, borderRadius: "100%" }} alt="ticket" />
             <View style={{ flexGrow: 1, padding: 10 }}>
                 <Text>{`${amount} Tickets`}</Text>
                 <Text>{ensNameData ?? "..."}</Text>
