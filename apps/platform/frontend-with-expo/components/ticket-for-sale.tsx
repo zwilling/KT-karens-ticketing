@@ -11,7 +11,6 @@ import { normalize } from 'viem/ens'
 
 import { prepareBuyTx } from "../app/prepareBuyTx";
 
-
 export default function TicketForSaleItem({ listing }) {
   const [isModalVisible, setModalVisibility] = useState(false);
   let avatarURL = "https://i.imgur.com/m0w4b4C.png";
@@ -41,23 +40,31 @@ export default function TicketForSaleItem({ listing }) {
 
   const toggleModal = () => {
     if (!isModalVisible) {
-      preSignUpWallet();
-    } 
+      const authToken = localStorage.getItem('dynamic_authentication_token');
+
+      if (!!authToken) {
+        // TODO: move after wallet connection
+        prepareBuyTx({
+          listingHash: listing.order_hash,
+          protocolAddr: listing.protocol_address,
+          fulfillerAddr: '0xCAEf9F8701aA4A1a8D8564D6871bf5bf8ACA9c1e',
+        });
+        // actually start transaction
+      } 
+    }
+
     setModalVisibility(!isModalVisible);
 
-    // TODO: move after wallet connection
-    prepareBuyTx({
-        listingHash: listing.order_hash,
-        protocolAddr: listing.protocol_address,
-        fulfillerAddr: '0xCAEf9F8701aA4A1a8D8564D6871bf5bf8ACA9c1e',
-    });
+
   }
 
   const preSignUpWallet = () => {
+    const authToken = localStorage.getItem('dynamic_authentication_token');
+
     const options = {
       method: "POST",
-      headers: { Authorization: 'Bearer <token>', 'Content-Type': 'application/json' },
-      body: '{"identifier":"mpascualacheson1@gmail.com","type":"email", "chain":"ETH", ,"socialProvider":"emailOnly"}'
+      headers: { Authorization: `Bearer ${authToken}`, 'Content-Type': 'application/json' },
+      body: '{"identifier":"mpascualacheson2@gmail.com","type":"email", "chain":"ETH", ,"socialProvider":"emailOnly"}'
     }
 
     fetch(`https://app.dynamicauth.com/api/v0/environments/${'20c52e9d-ac24-44d6-b10a-6754d033224e'}/embeddedWallets`, options)
