@@ -182,7 +182,7 @@ export default function TicketForSaleItem({ listing }) {
                     setModalVisibility(!isModalVisible);
                 }}>
 
-                <TouchableOpacity activeOpacity={1} onPress={toggleModal} style={styles.overlay}>
+                <TouchableOpacity activeOpacity={1} onPress={() => setModalVisibility(!isModalVisible)} style={styles.overlay}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                             <Icon name="times" size={30} color="#000" style={{ position: 'absolute', top: 10, right: 10 }} />
