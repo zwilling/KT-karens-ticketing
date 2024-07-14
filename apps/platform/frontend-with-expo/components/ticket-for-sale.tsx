@@ -38,7 +38,7 @@ export default function TicketForSaleItem({ listing }) {
       }
   }
 
-  const toggleModal = () => {
+  const toggleModal = async () => {
     if (!isModalVisible) {
       const authToken = localStorage.getItem('dynamic_authentication_token');
 
