@@ -14,6 +14,10 @@ import {
     PublicClient,
     parseEther,
 } from "viem";
+import {
+    useWriteContract,
+} from 'wagmi';
+import { simulateContract, /*writeContract*/ } from '@wagmi/core'
 
 import { useEnsName, useEnsAvatar } from "wagmi";
 import { sepolia, baseSepolia } from 'wagmi/chains'
@@ -24,10 +28,13 @@ import { prepareBuyTx } from "../app/prepareBuyTx";
 import { useRouter } from 'expo-router';
 import { getChain } from "@dynamic-labs/utils";
 import Toast from 'react-native-toast-message';
+import { abi } from "../app/parameters";
+import { wagmiConfig } from "../app/wagmi-config";
 
 
 export default function TicketForSaleItem({ listing }) {
     const { primaryWallet, walletConnector } = useDynamicContext();
+    const { data: txHash, writeContract } = useWriteContract();
     const router = useRouter();
 
     const [isModalVisible, setModalVisibility] = useState(false);
@@ -35,8 +42,8 @@ export default function TicketForSaleItem({ listing }) {
     let avatarURL = "https://i.imgur.com/m0w4b4C.png";
 
     const amount =
-        Number.parseInt(listing.protocol_data.parameters.totalOriginalConsiderationItems)
-        - Number.parseInt(listing.protocol_data.parameters.counter);
+        BigInt(listing.protocol_data.parameters.totalOriginalConsiderationItems)
+        - BigInt(listing.protocol_data.parameters.counter);
 
     const price = formatUnits(listing.price.current.value, listing.price.current.decimals);
     const currency = listing.price.current.currency;
@@ -98,8 +105,6 @@ export default function TicketForSaleItem({ listing }) {
         if (primaryWallet) {
             console.log('wallet_info', primaryWallet.connected, primaryWallet.address);
 
-            console.log('chain', primaryWallet.network);
-
             // if (walletConnector.supportsNetworkSwitching()) {
             //     walletConnector.switchNetwork({ networkChainId: baseSepolia.id })
             //         .then(() => console.log("Success! Network switched"))
@@ -115,21 +120,72 @@ export default function TicketForSaleItem({ listing }) {
                     provider.getChainId().then((chainId) => console.log('provider chainId', chainId));
 
                     const tx = txData;
+                    // TODO: dynamic
+                    tx.input_data.parameters.additionalRecipients[0].amount = BigInt(tx.input_data.parameters.additionalRecipients[0].amount);
                     tx.chain = getChain(84532); // TODO dynamic
-                    console.log('we have everything', txData);
-                    provider.sendTransaction(tx).then((hash) => {
-                        console.log(' hash', hash);
+                    const txArgs = [
+                        tx.input_data.parameters.considerationToken,
+                        BigInt(tx.input_data.parameters.considerationIdentifier),
+                        BigInt(tx.input_data.parameters.considerationAmount),
+                        tx.input_data.parameters.offerer,
+                        tx.input_data.parameters.zone,
+                        tx.input_data.parameters.offerToken,
+                        BigInt(tx.input_data.parameters.offerIdentifier),
+                        BigInt(tx.input_data.parameters.offerAmount),
+                        tx.input_data.parameters.basicOrderType,
+                        BigInt(tx.input_data.parameters.startTime),
+                        BigInt(tx.input_data.parameters.endTime),
+                        tx.input_data.parameters.zoneHash,
+                        BigInt(tx.input_data.parameters.salt),
+                        tx.input_data.parameters.offererConduitKey,
+                        tx.input_data.parameters.fulfillerConduitKey,
+                        BigInt(tx.input_data.parameters.totalOriginalAdditionalRecipients),
+                        [[
+                            tx.input_data.parameters.additionalRecipients[0].amount,
+                            tx.input_data.parameters.additionalRecipients[0].recipient,
+                        ]],
+                        tx.input_data.parameters.signature,
+                    ];
+                    console.log('we have everything', tx);
+                    // console.log('parameters', tx.input_data.parameters);
+                    console.log('txArgs', txArgs);
+                    console.log('abi', abi);
+                    console.log('args length', txArgs.length);
+                    console.log('abi length', abi[0].inputs.length);
+                    simulateContract(wagmiConfig, {
+                        abi: abi,
+                        address: tx.to,
+                        functionName: 'fulfillBasicOrder_efficient_6GL6yc',
+                        args: txArgs,
+                        chain: tx.chain,
+                        account: primaryWallet.address,
+                        value: tx.value,
+                    })
+                        .then((request) => {
+                            console.log('request simulation', request);
+                            // writeContract(request);
+                        })
+                        .catch((error) => console.error(error));
+                    // wait 
+                    setTimeout(() => {
+                        console.log('waiting for txResult', txHash);
+                    }, 5000);
 
-                        // stuff happens here!
+                    console.log('txResult', txHash);
 
-                        Toast.show({
-                            type: 'success',
-                            text1: 'Hello',
-                            text2: 'This is some something 👋'
-                        });
+                    // provider.sendTransaction(tx).then((hash) => {
+                    //     console.log(' hash', hash);
 
-                        router.push('/');
-                    }).catch((error) => console.error(error));
+                    //     // stuff happens here!
+
+                    //     Toast.show({
+                    //         type: 'success',
+                    //         text1: 'Hello',
+                    //         text2: 'This is some something 👋'
+                    //     });
+
+                    //     router.push('/');
+                    // }).catch((error) => console.error(error));
                 })
                     .catch((error) => console.error(error));
             }
