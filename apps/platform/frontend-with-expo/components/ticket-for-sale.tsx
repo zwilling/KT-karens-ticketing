@@ -1,30 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, Image, Pressable, Modal, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { formatUnits } from 'ethers';
+// import { queryEnsData } from "../app/ens";
+
+import { useEnsName, useEnsAvatar } from "wagmi";
+import { chainID } from "../app/parameters";
+import { sepolia } from 'wagmi/chains'
 
 export default function TicketForSaleItem({ listing }) {
     const [isModalVisible, setModalVisibility] = useState(false);
+    const [ensData, setEnsData] = useState(undefined);
 
     const toggleModal = () => {
         setModalVisibility(!isModalVisible);
     }
-
-    console.log('listing', listing);
 
     const amount =
         Number.parseInt(listing.protocol_data.parameters.totalOriginalConsiderationItems)
         - Number.parseInt(listing.protocol_data.parameters.counter);
     const price = formatUnits(listing.price.current.value, listing.price.current.decimals);
     const currency = listing.price.current.currency;
-    // TODO get offerer address and display name from ENS
+    const offerer = listing.protocol_data.parameters.offerer;
+
+    const { data: ensNameData, error: ensNameError } = useEnsName({ address: offerer, chainId: sepolia.id })
+    if (ensNameError) {
+        console.error('ensNameError', ensNameError);
+    }
 
     return (
         <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10, width: "100%" }}>
             <Image source={{ uri: "https://i.imgur.com/m0w4b4C.png" }} style={{ width: 80, height: 80, borderRadius: "100%" }} alt="ticket" />
             <View style={{ flexGrow: 1, padding: 10 }}>
                 <Text>{`${amount} Tickets`}</Text>
-                <Text>Official Organizer</Text>
+                <Text>{ensNameData ?? "..."}</Text>
             </View>
             <Pressable onPress={toggleModal} style={{ backgroundColor: "black", padding: 10, borderRadius: 10 }}>
                 <Text style={{ color: "white" }}>{`${price} ${currency}`}</Text>
