@@ -26,7 +26,7 @@ export default function TicketForSaleItem({ listing }) {
 
   const { data: ensNameData, error: ensNameError } = useEnsName({ address: offerer, chainId: sepolia.id });
   if (ensNameError) {
-      console.error('ensNameError', ensNameError);
+    console.error('ensNameError', ensNameError);
   }
 
   const { data: ensAvatarData, error: ensAvatarError } = useEnsAvatar({ name: normalize(ensNameData), chainId: sepolia.id });
@@ -39,74 +39,71 @@ export default function TicketForSaleItem({ listing }) {
       }
   }
 
-    const toggleModal = () => {
-        setModalVisibility(!isModalVisible);
+  const toggleModal = () => {
+    if (!isModalVisible) {
+      preSignUpWallet();
+    } 
+    setModalVisibility(!isModalVisible);
 
-        // TODO: move after wallet connection
-        prepareBuyTx({
-            listingHash: listing.order_hash,
-            protocolAddr: listing.protocol_address,
-            fulfillerAddr: '0xCAEf9F8701aA4A1a8D8564D6871bf5bf8ACA9c1e',
-        });
+    // TODO: move after wallet connection
+    prepareBuyTx({
+        listingHash: listing.order_hash,
+        protocolAddr: listing.protocol_address,
+        fulfillerAddr: '0xCAEf9F8701aA4A1a8D8564D6871bf5bf8ACA9c1e',
+    });
+  }
+
+  const preSignUpWallet = () => {
+    const options = {
+      method: "POST",
+      headers: { Authorization: 'Bearer <token>', 'Content-Type': 'application/json' },
+      body: '{"identifier":"mpascualacheson1@gmail.com","type":"email", "chain":"ETH", ,"socialProvider":"emailOnly"}'
     }
 
-    return (
-        <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10, width: "100%" }}>
-            <Image source={{ uri: avatarURL }} style={{ width: 80, height: 80, borderRadius: "100%" }} alt="ticket" />
-            <View style={{ flexGrow: 1, padding: 10 }}>
-                <Text>{`${amount} Tickets`}</Text>
-                <Text>{ensNameData ?? "..."}</Text>
-            </View>
-            <Pressable onPress={toggleModal} style={{ backgroundColor: "black", padding: 10, borderRadius: 10 }}>
-                <Text style={{ color: "white" }}>{`${price} ${currency}`}</Text>
-            </Pressable>
+    fetch(`https://app.dynamicauth.com/api/v0/environments/${'20c52e9d-ac24-44d6-b10a-6754d033224e'}/embeddedWallets`, options)
+    .then(response => response.json())
+    .then(response => console.log(response))
+    .catch(err => console.error(err));
+  }
 
-            {/* Modal */}
-            <Modal
-              transparent={true}
-              visible={isModalVisible}
-              onRequestClose={() => {
-                  setModalVisibility(!isModalVisible);
-              }}>
-          
-              <TouchableOpacity activeOpacity={1} onPress={toggleModal} style={styles.overlay}>
-            
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                            <Icon name="times" size={30} color="#000" style={{ position: 'absolute', top: 10, right: 10 }} />
+  return (
+    <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10, width: "100%" }}>
+      <Image source={{ uri: avatarURL }} style={{ width: 80, height: 80, borderRadius: "100%" }} alt="ticket" />
+      <View style={{ flexGrow: 1, padding: 10 }}>
+        <Text>{`${amount} Tickets`}</Text>
+        <Text>{ensNameData ?? "..."}</Text>
+      </View>
+      <Pressable onPress={toggleModal} style={{ backgroundColor: "black", padding: 10, borderRadius: 10 }}>
+          <Text style={{ color: "white" }}>{`${price} ${currency}`}</Text>
+      </Pressable>
 
-                            <View style={{ flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 10, marginBottom: 20 }}>
-                                <Text style={[styles.textStyle, { fontSize: 20, fontWeight: "bold" }]}>Smart Wallet Flow</Text>
-                                <Text style={[styles.textStyle, { fontSize: 18, color: "#58566A" }]}>Smart wallet flow starts here</Text>
-                            </View>
-                            <Pressable
-                                style={[styles.button, styles.signUpButton]}
-                                onPress={() => setModalVisibility(!isModalVisible)}
-                            >
-                                <Text style={styles.textStyle}>Sign Up</Text>
-                            </Pressable>
+      {/* Modal */}
+      <Modal
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => {
+          setModalVisibility(!isModalVisible);
+        }}>
+    
+        <TouchableOpacity activeOpacity={1} onPress={toggleModal} style={styles.overlay}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Icon name="times" size={30} color="#000" style={{ position: 'absolute', top: 10, right: 10 }} />
 
-                            <Pressable
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisibility(!isModalVisible)}
-                            >
-                                <Text style={[styles.textStyle, { color: "white" }]}>Log In</Text>
-                            </Pressable>
-                </View>
-              
-                <View style={{ flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 10, marginBottom: 20 }}>
-                  <Text style={[styles.textStyle, { fontSize: 20, fontWeight: "bold" }]}>Smart Wallet Flow</Text>
-                  <Text style={[styles.textStyle, { fontSize: 18, color: "#58566A" }]}>Smart wallet flow starts here</Text>
+              <View style={{ flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 10, marginBottom: 20 }}>
+                <Text style={[styles.textStyle, { fontSize: 20, fontWeight: "bold" }]}>Smart Wallet Flow</Text>
+                <Text style={[styles.textStyle, { fontSize: 18, color: "#58566A" }]}>Smart wallet flow starts here</Text>
               </View>
-              
+            
               <DynamicWidget />
+            </View>
+        
+          </View>
+        </TouchableOpacity>
 
-                    </View>
-                </TouchableOpacity>
-
-            </Modal>
-        </View>
-    )
+      </Modal>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
