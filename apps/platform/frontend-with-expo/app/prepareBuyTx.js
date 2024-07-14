@@ -1,4 +1,5 @@
 import { chainIDOpenSea } from "./parameters"
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 /**
  * Ask OpenSea API to prepare the transaction to buy a ticket from a listing
