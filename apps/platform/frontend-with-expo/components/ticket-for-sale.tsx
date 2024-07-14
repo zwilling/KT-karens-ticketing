@@ -22,12 +22,13 @@ import { normalize } from 'viem/ens'
 import { prepareBuyTx } from "../app/prepareBuyTx";
 
 import { useRouter } from 'expo-router';
-import { useRoute } from '@react-navigation/native';
+import { getChain } from "@dynamic-labs/utils";
+import Toast from 'react-native-toast-message';
 
 
 export default function TicketForSaleItem({ listing }) {
+    const { primaryWallet, walletConnector } = useDynamicContext();
     const router = useRouter();
-    const route = useRoute();
 
     const [isModalVisible, setModalVisibility] = useState(false);
     const [txData, setTxData] = useState(undefined);
@@ -94,28 +95,40 @@ export default function TicketForSaleItem({ listing }) {
                 .catch(err => console.error(err));
         }
 
-        const { primaryWallet, walletConnector } = useDynamicContext();
         if (primaryWallet) {
             console.log('wallet_info', primaryWallet.connected, primaryWallet.address);
 
             console.log('chain', primaryWallet.network);
 
-            if (walletConnector.supportsNetworkSwitching()) {
-                walletConnector.switchNetwork({ networkChainId: baseSepolia.id })
-                    .then(() => console.log("Success! Network switched"))
-                    .catch((error) => console.error(error));
-                console.log("Success! Network switched");
-            }
+            // if (walletConnector.supportsNetworkSwitching()) {
+            //     walletConnector.switchNetwork({ networkChainId: baseSepolia.id })
+            //         .then(() => console.log("Success! Network switched"))
+            //         .catch((error) => console.error(error));
+            //     console.log("Success! Network switched");
+            // }
 
             if (txData) {
                 primaryWallet.connector.getSigner<
                     WalletClient<Transport, Chain, Account>
                 >().then((provider) => {
 
+                    provider.getChainId().then((chainId) => console.log('provider chainId', chainId));
 
-                    console.log('we have everything', txData, provider);
-                    provider.sendTransaction(txData).then((hash) => {
+                    const tx = txData;
+                    tx.chain = getChain(84532); // TODO dynamic
+                    console.log('we have everything', txData);
+                    provider.sendTransaction(tx).then((hash) => {
                         console.log(' hash', hash);
+
+                        // stuff happens here!
+
+                        Toast.show({
+                            type: 'success',
+                            text1: 'Hello',
+                            text2: 'This is some something 👋'
+                        });
+
+                        router.push('/');
                     }).catch((error) => console.error(error));
                 })
                     .catch((error) => console.error(error));
@@ -143,7 +156,6 @@ export default function TicketForSaleItem({ listing }) {
             .catch(err => console.error(err));
     }
 
-    const { primaryWallet } = useDynamicContext();
     if (primaryWallet) {
         console.log('wallet_info', primaryWallet.connected, primaryWallet.address);
     }

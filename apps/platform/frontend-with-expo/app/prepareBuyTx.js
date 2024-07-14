@@ -25,17 +25,8 @@ export async function prepareBuyTx({ listingHash, protocolAddr, fulfillerAddr, c
 
     const data = await response.json();
     console.log("Data: ", data);
-    callback(response.fulfillment_data.transaction);
+    callback(data.fulfillment_data.transaction);
 
-    // stuff happens here!
-
-    Toast.show({
-      type: 'success',
-      text1: 'Hello',
-      text2: 'This is some something 👋'
-    });
-
-    router.push('/');
 
   } catch (err) {
     console.error(err);
