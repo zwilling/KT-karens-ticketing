@@ -1,11 +1,7 @@
 import { chainIDOpenSea } from "./parameters"
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core"
 
 import Toast from 'react-native-toast-message';
-
-import { createQueryString } from "../utils/createQueryString";
-
 /**
  * Ask OpenSea API to prepare the transaction to buy a ticket from a listing
  */
@@ -52,7 +48,5 @@ export async function prepareBuyTx({ listingHash, protocolAddr, fulfillerAddr, r
     });
 
     onError();
-
-    // router.replace(pathname);
   }
 }

@@ -1,9 +1,23 @@
 import { StyleSheet } from "react-native"
+import { useState } from "react"
 
-export default function SearchBar() {
+export default function SearchBar({ handleSearch }) {
+  const [query, setQuery] = useState("");
+
+  const onChange = (e) => {
+    const value = e.target.value;
+    setQuery(e.target.value);
+    handleSearch(value);
+  }
+
   return (
     <div style={styles.container}>
-      <input type="text" placeholder="Search..." style={styles.searchBar} />
+      <input
+        type="text"
+        placeholder="Search..."
+        style={styles.searchBar}
+        value={query}
+        onChange={ onChange } />
     </div>
   )
 }

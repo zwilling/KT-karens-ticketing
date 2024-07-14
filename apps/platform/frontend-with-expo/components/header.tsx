@@ -11,14 +11,11 @@ const logo = "../assets/logo.svg"
 export default function Header() {
   const pathname = usePathname();
 
-  const isHomePage = pathname === '/';
-
   return (
     <div style={styles.header}>
       <Link href="/">
         <Image src={logo} width={100} height={100} alt="Karen Tickets" />
       </Link>
-      {isHomePage && <SearchBar />}
     </div>
   )
 }

@@ -7,6 +7,7 @@ import Loading from "../components/loading";
 import { useFonts } from 'expo-font';
 
 import TicketListItem from "../components/ticket-list-item";
+import SearchBar from "../components/searchBar";
 
 import { Urbanist_400Regular, Urbanist_500Medium, Urbanist_600SemiBold } from '@expo-google-fonts/urbanist';
 
@@ -18,7 +19,21 @@ export default function Discover() {
   });
 
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const handleSearch = (query) => {
+    if (!query) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const lowercasedQuery = query.toLowerCase();
+    const newFilteredList = filteredEvents.filter((item) =>
+      item.nft.name.toLowerCase().includes(lowercasedQuery)
+    );
+    setFilteredEvents(newFilteredList);
+  }
 
   useEffect(() => {
     // get all available events
@@ -39,6 +54,7 @@ export default function Discover() {
         }
         // console.log('Response with NFTs', response);
         setEvents(response['collections']);
+        setFilteredEvents(response['collections']);
         setLoading(false);
       })
       .catch(err => console.error(err));
@@ -52,11 +68,12 @@ export default function Discover() {
     } else {
       return (
         <View style={styles.container}>
+          <SearchBar handleSearch={handleSearch} />
           <Text style={styles.trendingTitle}>Trending</Text>
           <Text style={{ fontSize: 16, fontFamily: 'Urbanist_400Regular', fontWeight: '400' }}>Coming Up</Text>
 
           <View>
-            {events.slice(0, 3).map((event, index) => (
+            {filteredEvents.slice(0, 3).map((event, index) => (
               <TicketListItem event={event} key={index} />
             ))}
           </View>
