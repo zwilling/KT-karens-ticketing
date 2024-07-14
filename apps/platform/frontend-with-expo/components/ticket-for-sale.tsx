@@ -52,13 +52,20 @@ export default function TicketForSaleItem({ listing }) {
 
       if (!!authToken) {
         // TODO: move after wallet connection
-        prepareBuyTx({
-          listingHash: listing.order_hash,
-          protocolAddr: listing.protocol_address,
-          fulfillerAddr: '0xCAEf9F8701aA4A1a8D8564D6871bf5bf8ACA9c1e',
-          router,
-          route
-        });
+        try {
+          prepareBuyTx({
+            listingHash: listing.order_hash,
+            protocolAddr: listing.protocol_address,
+            fulfillerAddr: '0xCAEf9F8701aA4A1a8D8564D6871bf5bf8ACA9c1e',
+            router,
+            onError: () => setModalVisibility(false)
+          });
+          setModalVisibility(false);
+        } catch (err) {
+          console.error("Component error: ", err);
+          setModalVisibility(false);
+        }
+
         // actually start transaction
       } 
     }

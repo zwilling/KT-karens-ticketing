@@ -9,7 +9,7 @@ import { createQueryString } from "../utils/createQueryString";
 /**
  * Ask OpenSea API to prepare the transaction to buy a ticket from a listing
  */
-export async function prepareBuyTx({ listingHash, protocolAddr, fulfillerAddr, router, route }) {
+export async function prepareBuyTx({ listingHash, protocolAddr, fulfillerAddr, router, onError }) {
   try {
     const options = {
       method: 'POST',
@@ -43,15 +43,15 @@ export async function prepareBuyTx({ listingHash, protocolAddr, fulfillerAddr, r
     router.push('/');
 
   } catch (err) {
-    console.log("Route: ", route);
-    console.log("Current path: ", currentPath);
     console.error(err);
 
     Toast.show({
       type: 'error',
-      text1: 'Nope',
-      text2: 'This is some something 👋'
+      text1: 'Error',
+      text2: err.message
     });
+
+    onError();
 
     // router.replace(pathname);
   }
